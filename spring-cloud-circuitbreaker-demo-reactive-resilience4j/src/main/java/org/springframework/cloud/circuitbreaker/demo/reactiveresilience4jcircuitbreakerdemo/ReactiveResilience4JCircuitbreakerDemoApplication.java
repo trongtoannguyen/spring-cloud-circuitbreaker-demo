@@ -40,15 +40,19 @@ public class ReactiveResilience4JCircuitbreakerDemoApplication {
 		return WebClient.builder();
 	}
 
-	@Bean
-	public Customizer<ReactiveResilience4JCircuitBreakerFactory> defaultCustomizer() {
-		CircuitBreakerRegistry cbr = CircuitBreakerRegistry.ofDefaults();
-		return factory -> {
-			factory.configureDefault(id -> new Resilience4JConfigBuilder(id)
-					.circuitBreakerConfig(CircuitBreakerConfig.ofDefaults())
-					.timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(3)).build())
-					.circuitBreakerConfig(CircuitBreakerConfig.custom().failureRateThreshold(10)
-							.slowCallRateThreshold(5).slowCallRateThreshold(2).build()).build());
-		};
-	}
+
+    @Bean
+    public Customizer<ReactiveResilience4JCircuitBreakerFactory> defaultCustomizer() {
+        return factory -> {
+            factory.configureDefault(id -> new Resilience4JConfigBuilder(id)
+                    .circuitBreakerConfig(CircuitBreakerConfig.custom()
+                            .failureRateThreshold(10)
+                            .slowCallRateThreshold(2)
+                            .build())
+                    .timeLimiterConfig(TimeLimiterConfig.custom()
+                            .timeoutDuration(Duration.ofSeconds(3))
+                            .build())
+                    .build());
+        };
+    }
 }
